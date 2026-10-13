@@ -1,0 +1,69 @@
+[
+  {
+    "id": 1787265142217,
+    "tipo": "info",
+    "mensaje": "se ha ingresado al servidor correctamente",
+    "fechaCreacion": "2026-08-20T22:32:22.217Z"
+  },
+  {
+    "id": 1787265154861,
+    "tipo": "info",
+    "mensaje": "se ha ingresado al servidor correctamente",
+    "fechaCreacion": "2026-08-20T22:32:34.861Z"
+  },
+  {
+    "id": 1787265157289,
+    "tipo": "info",
+    "mensaje": "se ha ingresado al servidor correctamente",
+    "fechaCreacion": "2026-08-20T22:32:37.289Z"
+  },
+  {
+    "id": 1787265384010,
+    "tipo": "info",
+    "mensaje": "Se ha ingresado al servidor correctamente",
+    "ruta": "/status",
+    "fechaCreacion": "2026-08-20T22:36:24.010Z"
+  },
+  {
+    "id": 1787265392988,
+    "tipo": "info",
+    "mensaje": "Ha saludado con éxito",
+    "ruta": "/saludar/Ana",
+    "fechaCreacion": "2026-08-20T22:36:32.988Z"
+  },
+  {
+    "id": 1787265409744,
+    "tipo": "info",
+    "mensaje": "Ha saludado con éxito",
+    "ruta": "/saludar/Carolina",
+    "fechaCreacion": "2026-08-20T22:36:49.744Z"
+  },
+  {
+    "id": 1787266236576,
+    "tipo": "info",
+    "mensaje": "Se ha ingresado al servidor correctamente",
+    "ruta": "/status",
+    "fechaCreacion": "2026-08-20T22:50:36.576Z"
+  },
+  {
+    "id": 1787266334479,
+    "tipo": "info",
+    "mensaje": "Se ha ingresado al servidor correctamente",
+    "ruta": "/status",
+    "fechaCreacion": "2026-08-20T22:52:14.479Z"
+  },
+  {
+    "id": 1788576681920,
+    "tipo": "info",
+    "mensaje": "Se ha ingresado al servidor correctamente",
+    "ruta": "/status",
+    "fechaCreacion": "2026-09-05T02:51:21.920Z"
+  },
+  {
+    "id": 1788576871319,
+    "tipo": "info",
+    "mensaje": "Ha saludado con éxito",
+    "ruta": "/saludar/ana",
+    "fechaCreacion": "2026-09-05T02:54:31.319Z"
+  }
+]
