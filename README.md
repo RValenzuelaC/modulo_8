@@ -221,53 +221,182 @@ Esto permite entregar respuestas claras y evita que la aplicación se cierre ine
 
 ## Rutas disponibles
 
-| Método | Ruta | Descripción |
-|---|---|---|
-| `GET` | `/usuarios` | Obtiene todos los usuarios |
-| `PUT` | `/usuarios/:id` | Actualiza el correo de un usuario |
-| `DELETE` | `/usuarios/:id` | Elimina un usuario |
-| `POST` | `/usuarios/con-historial` | Crea un usuario y su historial dentro de una transacción |
-| `GET` | `/usuarios/:id/historiales` | Obtiene un usuario junto con sus historiales |
+### Gestión de usuarios
+
+| Método | Ruta | Descripción | Autenticación |
+|---|---|---|---|
+| `GET` | `/usuarios` | Obtiene todos los usuarios registrados | JWT |
+| `GET` | `/usuarios/me` | Obtiene los datos del usuario autenticado | JWT |
+| `GET` | `/usuarios/:id/historiales` | Obtiene un usuario junto con sus historiales | JWT |
+| `POST` | `/usuarios/con-historial` | Crea un usuario y su historial mediante una transacción | JWT |
+| `PUT` | `/usuarios/:id` | Actualiza el correo electrónico de un usuario | JWT |
+| `DELETE` | `/usuarios/:id` | Elimina un usuario mediante su identificador | JWT |
+
+### Autenticación
+
+| Método | Ruta | Descripción | Autenticación |
+|---|---|---|---|
+| `POST` | `/registro` | Registra un nuevo usuario | No requiere |
+| `POST` | `/login` | Valida las credenciales y genera un token JWT | No requiere |
+
+### Subida de archivos
+
+| Método | Ruta | Descripción | Autenticación |
+|---|---|---|---|
+| `POST` | `/upload` | Recibe y almacena una imagen mediante Multer | No requiere, según la configuración actual |
+| `GET` | `/uploads/:nombre-archivo` | Permite acceder a un archivo almacenado | No requiere, según la configuración actual |
+
+Las rutas protegidas requieren un token JWT válido en el encabezado HTTP:
+
+`Authorization: Bearer TOKEN`
+
+El middleware de autenticación verifica el token antes de permitir el acceso a las rutas protegidas.
 
 ## Requisitos del sistema
 
-Para instalar y ejecutar el proyecto se necesita:
+Para instalar y ejecutar el proyecto se necesitan las siguientes herramientas:
 
 - Node.js.
 - npm.
 - PostgreSQL.
 - Una base de datos creada en PostgreSQL.
-- Sequelize como ORM.
-- El controlador `pg` para conectar Sequelize con PostgreSQL.
-- Express para crear el servidor y administrar las rutas.
-- dotenv para utilizar variables de entorno.
-- Nodemon para ejecutar el servidor durante el desarrollo.
 - Visual Studio Code o un editor equivalente.
-- Postman o una herramienta similar para probar las rutas.
+- Postman para probar las rutas de la API.
 
-Las dependencias principales utilizadas en el proyecto son:
+### Tecnologías y dependencias
 
-- `express`
-- `sequelize`
-- `pg`
-- `pg-hstore`
-- `dotenv`
-- `ejs`
+El proyecto utiliza las siguientes tecnologías y bibliotecas:
 
-Como dependencia de desarrollo se utiliza:
+| Tecnología o dependencia | Función |
+|---|---|
+| `Node.js` | Entorno de ejecución de JavaScript en el servidor |
+| `Express` | Creación del servidor y administración de rutas HTTP |
+| `Sequelize` | ORM para interactuar con PostgreSQL mediante modelos |
+| `pg` | Controlador de conexión entre Node.js y PostgreSQL |
+| `pg-hstore` | Dependencia utilizada por Sequelize para determinadas operaciones con PostgreSQL |
+| `dotenv` | Lectura de variables de entorno desde el archivo `.env` |
+| `EJS` | Motor de plantillas para las vistas de la aplicación |
+| `bcrypt` | Generación y comparación de hashes de contraseñas |
+| `jsonwebtoken` | Generación y validación de tokens JWT |
+| `Multer` | Recepción y almacenamiento de archivos enviados mediante HTTP |
+| `Nodemon` | Reinicio automático del servidor durante el desarrollo |
 
-- `nodemon`
+### Instalación de dependencias
 
-Las credenciales de conexión con PostgreSQL deben almacenarse dentro de un archivo `.env`.
+Para instalar las dependencias necesarias, ejecutar en la terminal:
 
-Las variables utilizadas son:
+`npm install`
+
+Si alguna de las bibliotecas nuevas todavía no está instalada, ejecutar:
+
+`npm install multer jsonwebtoken bcrypt`
+
+### Variables de entorno
+
+Las credenciales de PostgreSQL y los parámetros de autenticación se almacenan en el archivo `.env`.
+
+Las variables utilizadas para la conexión a la base de datos son:
 
 - `DB_NAME`: nombre de la base de datos.
 - `DB_USER`: usuario de PostgreSQL.
 - `DB_PASSWORD`: contraseña de PostgreSQL.
 - `DB_HOST`: dirección del servidor de PostgreSQL.
-- `DB_PORT`: puerto utilizado por PostgreSQL.
+- `DB_PORT`: puerto de PostgreSQL.
 - `PORT`: puerto utilizado por Express.
 
-El archivo `.env` debe agregarse a `.gitignore` para evitar que las credenciales sean publicadas en el repositorio. También se debe excluir la carpeta `node_modules`.
+Para la autenticación se utilizan las siguientes variables:
 
+- `JWT_SECRET`: clave secreta utilizada para firmar y verificar los tokens JWT.
+- `JWT_EXPIRES_IN`: tiempo de expiración del token, por ejemplo, `1h`.
+
+La variable `JWT_SECRET` debe contener una clave secreta robusta y mantenerse privada.
+
+El archivo `.env` debe incluirse en `.gitignore` para evitar publicar credenciales o claves secretas en el repositorio. También se debe excluir la carpeta `node_modules`.
+## Autenticación con JWT
+
+El proyecto incorpora autenticación mediante JSON Web Tokens (JWT), permitiendo validar la identidad de los usuarios antes de acceder a determinadas rutas de la API.
+
+### Endpoints de autenticación
+
+- `POST /registro`: registra un usuario con nombre, correo electrónico y contraseña.
+- `POST /login`: valida las credenciales y genera un token JWT.
+- `GET /usuarios/me`: obtiene los datos del usuario autenticado mediante el token.
+
+### Funcionamiento
+
+1. El usuario se registra en la aplicación.
+2. Inicia sesión enviando su correo electrónico y contraseña.
+3. Si las credenciales son correctas, el servidor genera un token JWT.
+4. El cliente envía el token en el encabezado `Authorization: Bearer TOKEN` para acceder a las rutas protegidas.
+5. El servidor verifica la validez y expiración del token antes de permitir el acceso.
+
+Las contraseñas se almacenan mediante hashes generados con `bcrypt`, evitando guardar las contraseñas originales en la base de datos.
+
+### Protección de rutas
+
+Las rutas protegidas utilizan un middleware de autenticación que valida el token recibido.
+
+La ruta `GET /usuarios/me` consulta el identificador incluido en el token y devuelve únicamente los datos del usuario autenticado, sin exponer su contraseña ni su hash.
+
+La ruta `GET /usuarios` permite consultar el listado de usuarios cuando está autorizada. La validación del JWT no limita automáticamente los resultados a un solo usuario; ese comportamiento depende de la consulta realizada por el controlador.
+
+La duración del token se configura mediante las variables de entorno `JWT_SECRET` y `JWT_EXPIRES_IN`.
+
+## Subida de archivos con Multer
+
+El proyecto incorpora Multer para gestionar la recepción y el almacenamiento de archivos enviados mediante peticiones HTTP.
+
+### Endpoint de subida
+
+- **Método:** `POST`
+- **Ruta:** `/upload`
+- **Formato de la petición:** `multipart/form-data`
+- **Nombre del campo del archivo:** `file`
+
+### Características
+
+- Permite subir imágenes en formato PNG y JPEG.
+- Establece un tamaño máximo de 5 MB por archivo.
+- Genera nombres únicos para los archivos almacenados.
+- Guarda los archivos en la carpeta `uploads/`, ubicada en la raíz del proyecto.
+- Devuelve una respuesta JSON con el nombre del archivo, su tipo, tamaño y URL de acceso.
+
+### Ejemplo de respuesta
+
+json
+{
+  "mensaje": "Archivo subido correctamente.",
+  "archivo": {
+    "nombre": "nombre-generado.png",
+    "tipo": "image/png",
+    "tamano": 125430,
+    "url": "/uploads/nombre-generado.png"
+  }
+}
+## Pruebas realizadas en Postman
+
+Se realizaron pruebas de las funcionalidades de autenticación mediante JWT y de subida de archivos utilizando Postman. A continuación, se presentan las evidencias obtenidas durante las peticiones realizadas a la API.
+
+### 1. Registro de usuario
+
+![Usuario de prueba creado con JWT](pantallazos_funcionamiento/usuario_prueba_creadojwt.png)
+
+Se realizó una petición para registrar un nuevo usuario, enviando su nombre, correo electrónico y contraseña. El servidor confirmó la creación del usuario mediante una respuesta JSON.
+
+### 2. Inicio de sesión con JWT
+
+![Usuario ingresado con JWT](pantallazos_funcionamiento/usuario_ingresado_jwt.png)
+
+Se enviaron las credenciales del usuario registrado mediante una petición de inicio de sesión. Después de validar los datos, el servidor permitió el acceso y generó el token JWT correspondiente.
+
+### 3. Obtención del token JWT
+
+![Obtención del JWT](pantallazos_funcionamiento/obtencion_jwt.png)
+
+Se verificó la respuesta de autenticación en Postman, comprobando la obtención del token JWT. Este token se utiliza en el encabezado `Authorization: Bearer TOKEN` para acceder a las rutas protegidas de la API.
+
+### 4. Subida de archivos con Multer
+
+![Archivo subido mediante Multer](pantallazos_funcionamiento/imagen_subida.png)
+
+Se realizó una petición `POST /upload` utilizando el formato `multipart/form-data` y el campo `file`. El servidor procesó la imagen mediante Multer y devolvió una respuesta JSON con información del archivo subido.
